@@ -11,6 +11,12 @@ const githubReducer = (state, action) => {
           ...state,
           loading:true,
         }
+        case "CLEAR_SEARCH":
+          return {
+            ...state,
+            users:[],
+
+          }
     default:
       return state;
   }
