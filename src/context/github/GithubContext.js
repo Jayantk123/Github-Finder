@@ -1,3 +1,4 @@
+import { logDOM } from "@testing-library/react";
 import { createContext, useReducer, useState } from "react";
 import githubReducer from "./GithubReducer";
 const GithubContext = createContext();
@@ -18,24 +19,54 @@ export const GithubProvider = ({ children }) => {
   const [state, dispatch] = useReducer(githubReducer, initialState);
   
   // get initial users
-  const fetchUsers = async () => {
+  // const fetchUsers = async () => {
+  //   setLoading()
+
+  //   const response = await fetch(`${GITHUB_URL}/users`, {
+  //     // headers:{
+  //     //     Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
+  //     // },
+  //     // for increasing rate limit
+  //   });
+
+  //   const data = await response.json();
+
+  //   // setUsers(data);
+  //   // setLoading(false);
+
+  //   dispatch({
+  //     type:'GET_USERS',
+  //     payload:data,
+  //   })
+  // };
+
+
+// search user
+  // get initial users
+  const searchUsers = async (text) => {
     setLoading()
 
-    const response = await fetch(`${GITHUB_URL}/users`, {
+    const params = new URLSearchParams({
+      q:text
+    })
+
+    const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
       // headers:{
       //     Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
       // },
       // for increasing rate limit
     });
 
-    const data = await response.json();
+    const {items} = await response.json();
+
+    console.log(items);
 
     // setUsers(data);
     // setLoading(false);
 
     dispatch({
       type:'GET_USERS',
-      payload:data,
+      payload:items,
     })
   };
 
@@ -48,7 +79,8 @@ export const GithubProvider = ({ children }) => {
       value={{
         users:state.users,
         loading:state.loading,
-        fetchUsers,
+        // fetchUsers,
+        searchUsers,
       }}
     >
       {children}
