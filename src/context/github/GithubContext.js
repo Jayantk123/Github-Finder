@@ -14,10 +14,11 @@ export const GithubProvider = ({ children }) => {
 
   const initialState = {
     users: [],
+    user: {},
     loading: false,
   };
   const [state, dispatch] = useReducer(githubReducer, initialState);
-  
+
   // get initial users
   // const fetchUsers = async () => {
   //   setLoading()
@@ -40,15 +41,14 @@ export const GithubProvider = ({ children }) => {
   //   })
   // };
 
-
-// search user
+  // search user
   // get initial users
   const searchUsers = async (text) => {
-    setLoading()
+    setLoading();
 
     const params = new URLSearchParams({
-      q:text
-    })
+      q: text,
+    });
 
     const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
       // headers:{
@@ -57,7 +57,7 @@ export const GithubProvider = ({ children }) => {
       // for increasing rate limit
     });
 
-    const {items} = await response.json();
+    const { items } = await response.json();
 
     console.log(items);
 
@@ -65,29 +65,58 @@ export const GithubProvider = ({ children }) => {
     // setLoading(false);
 
     dispatch({
-      type:'GET_USERS',
-      payload:items,
-    })
+      type: "GET_USERS",
+      payload: items,
+    });
   };
 
+  // get single  user
+  const getUser = async (login) => {
+    setLoading();
+
+    const response = await fetch(`${GITHUB_URL}/users/${login}`);
+
+
+    if(response.status===404) {
+      window.location='/notfound'
+    } else {
+
+      const data = await response.json();
+
+   
+
+  
+
+    dispatch({
+      type: "GET_USER",
+      payload: data,
+    });
+    }
+    
+    
+  };
 
   // clear search
-const clearSearch=()=>dispatch({
-type:"CLEAR_SEARCH"
-})
+  const clearSearch = () =>
+    dispatch({
+      type: "CLEAR_SEARCH",
+    });
 
   // set loading
-  const setLoading=()=>dispatch({
-    type:'SET_LOADING'
-  })
+  const setLoading = () =>
+    dispatch({
+      type: "SET_LOADING",
+    });
   return (
     <GithubContext.Provider
       value={{
-        users:state.users,
-        loading:state.loading,
+        users: state.users,
+        user: state.user,
+        loading: state.loading,
         // fetchUsers,
         searchUsers,
         clearSearch,
+        getUser,
       }}
     >
       {children}
