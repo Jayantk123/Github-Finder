@@ -4,14 +4,16 @@ import { useParams } from "react-router-dom";
 import GithubContext from "../context/github/GithubContext";
 import { Link } from "react-router-dom";
 import Spinner from "../Components/Layout/Spinner";
+import RepoList from "../Components/repos/RepoList";
 export default function User() {
-  const { getUser, user, loading, repos, getUsersRepos } =
+  const { getUser, user, loading, getUsersRepos, repos } =
     useContext(GithubContext);
 
   const params = useParams();
   useEffect(() => {
     getUser(params.login);
     getUsersRepos(params.login);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
@@ -34,6 +36,8 @@ export default function User() {
   if (loading) {
     return <Spinner />;
   }
+  let blog_name = [];
+  blog_name = blog?.split("/");
 
   return (
     <>
@@ -91,7 +95,7 @@ export default function User() {
                   <div className="stat-title text-md">Website</div>
                   <div className="text-lg stat-value">
                     <a href={blog} target="_blank" rel="noreferrer">
-                      {blog}
+                      {blog_name[4]}
                     </a>
                   </div>
                 </div>
@@ -125,7 +129,6 @@ export default function User() {
             </div>
           </div>
 
-
           <div className="stat">
             <div className="stat-figure text-secondary">
               <FaUserFriends className="text-3xl md:text-5xl" />
@@ -156,6 +159,7 @@ export default function User() {
             </div>
           </div>
         </div>
+        <RepoList repos={repos} key={repos.id} />
       </div>
     </>
   );
