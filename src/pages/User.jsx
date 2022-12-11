@@ -5,14 +5,23 @@ import GithubContext from "../context/github/GithubContext";
 import { Link } from "react-router-dom";
 import Spinner from "../Components/Layout/Spinner";
 import RepoList from "../Components/repos/RepoList";
+import FollowersList from "../Components/followers/FollowersList";
 export default function User() {
-  const { getUser, user, loading, getUsersRepos, repos } =
-    useContext(GithubContext);
+  const {
+    getUser,
+    user,
+    loading,
+    getUsersRepos,
+    repos,
+    getUsersFollowers,
+    user_followers,
+  } = useContext(GithubContext);
 
   const params = useParams();
   useEffect(() => {
     getUser(params.login);
     getUsersRepos(params.login);
+    getUsersFollowers(params.login);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -33,6 +42,7 @@ export default function User() {
     hireable,
   } = user;
 
+  console.log(typeof user_followers);
   if (loading) {
     return <Spinner />;
   }
@@ -121,7 +131,9 @@ export default function User() {
         <div className="w-full py-5 mb-6 rounded-lg shadow-md bg-base-100 stats">
           <div className="stat">
             <div className="stat-figure text-secondary">
-              <FaUsers className="text-3xl md:text-5xl" />
+              <button className="button">
+                <FaUsers className="text-3xl md:text-5xl" />
+              </button>
             </div>
             <div className="stat-title pr-5">Followers</div>
             <div className="stat-value pr-5 text-3xl md:text-4xl">
@@ -159,6 +171,8 @@ export default function User() {
             </div>
           </div>
         </div>
+        <FollowersList followersdata={user_followers} />
+
         <RepoList repos={repos} key={repos.id} />
       </div>
     </>

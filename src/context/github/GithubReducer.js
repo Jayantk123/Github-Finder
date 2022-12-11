@@ -18,6 +18,12 @@ const githubReducer = (state, action) => {
           repos:action.payload,
           loading:false,
         }
+        case 'GET_FOLLOWERS':
+          return {
+            ...state,
+            user_followers:action.payload,
+            loading:false,
+          }
       case 'SET_LOADING':
         return {
           ...state,
@@ -29,6 +35,10 @@ const githubReducer = (state, action) => {
             users:[],
 
           }
+          case 'SHOW_FOLLOWING':
+            return {
+              
+            }
     default:
       return state;
   }

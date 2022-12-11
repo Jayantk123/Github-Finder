@@ -16,6 +16,7 @@ export const GithubProvider = ({ children }) => {
     users: [],
     user: {},
     repos:[],
+    user_followers:[],
     loading: false,
   };
   const [state, dispatch] = useReducer(githubReducer, initialState);
@@ -119,6 +120,26 @@ console.log(data)
     });
   };
 
+  // get user followers
+  const getUsersFollowers = async (login) => {
+    setLoading();
+
+   
+    const response = await fetch(`${GITHUB_URL}/users/${login}/followers`, {
+    
+    });
+
+    const data = await response.json();
+
+  console.log(data)
+
+    dispatch({
+      type: "GET_FOLLOWERS",
+      payload: data,
+    });
+  };
+
+
   // clear search
   const clearSearch = () =>
     dispatch({
@@ -130,6 +151,14 @@ console.log(data)
     dispatch({
       type: "SET_LOADING",
     });
+
+
+const showFollowing=()=>
+dispatch({
+  type:"SHOW_FOLLOWING"
+});
+
+
   return (
     <GithubContext.Provider
       value={{
@@ -137,11 +166,14 @@ console.log(data)
         user: state.user,
         repos:state.repos,
         loading: state.loading,
+        user_followers:state.user_followers,
         // fetchUsers,
         searchUsers,
         clearSearch,
         getUser,
         getUsersRepos,
+        getUsersFollowers,
+
       }}
     >
       {children}
