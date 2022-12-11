@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Spinner from "../Components/Layout/Spinner";
 import RepoList from "../Components/repos/RepoList";
 import FollowersList from "../Components/followers/FollowersList";
+import FollowingsList from "../Components/followings/FollowingsList";
 export default function User() {
   const {
     getUser,
@@ -15,6 +16,8 @@ export default function User() {
     repos,
     getUsersFollowers,
     user_followers,
+    getUsersFollowings,
+    user_followings,
   } = useContext(GithubContext);
 
   const params = useParams();
@@ -22,6 +25,7 @@ export default function User() {
     getUser(params.login);
     getUsersRepos(params.login);
     getUsersFollowers(params.login);
+    getUsersFollowings(params.login);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -131,9 +135,7 @@ export default function User() {
         <div className="w-full py-5 mb-6 rounded-lg shadow-md bg-base-100 stats">
           <div className="stat">
             <div className="stat-figure text-secondary">
-              <button className="button">
-                <FaUsers className="text-3xl md:text-5xl" />
-              </button>
+              <FaUsers className="text-3xl md:text-5xl" />
             </div>
             <div className="stat-title pr-5">Followers</div>
             <div className="stat-value pr-5 text-3xl md:text-4xl">
@@ -145,6 +147,7 @@ export default function User() {
             <div className="stat-figure text-secondary">
               <FaUserFriends className="text-3xl md:text-5xl" />
             </div>
+
             <div className="stat-title pr-5">Following</div>
             <div className="stat-value pr-5 text-3xl md:text-4xl">
               {following}
@@ -171,9 +174,9 @@ export default function User() {
             </div>
           </div>
         </div>
-        <FollowersList followersdata={user_followers} />
-
         <RepoList repos={repos} key={repos.id} />
+        <FollowersList followersdata={user_followers} />
+        <FollowingsList followingsdata={user_followings} />
       </div>
     </>
   );

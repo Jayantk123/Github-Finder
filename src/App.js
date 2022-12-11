@@ -8,6 +8,7 @@ import { GithubProvider } from "./context/github/GithubContext";
 import { AlertProvider } from "./context/alert/AlertContext";
 import Alert from "./Components/Layout/Alert";
 import User from "./pages/User";
+import FollowersList from "./Components/followers/FollowersList";
 function App() {
   return (
     <AlertProvider>
@@ -18,7 +19,7 @@ function App() {
               <Navbar />
 
               <main className="container mx-auto px-3 pb-12">
-                <Alert/>
+                <Alert />
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<About />} />
