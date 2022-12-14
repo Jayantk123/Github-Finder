@@ -1,10 +1,14 @@
 import { logDOM } from "@testing-library/react";
+import axios from "axios";
 import { createContext, useReducer, useState } from "react";
 import githubReducer from "./GithubReducer";
 const GithubContext = createContext();
 
 const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 
+const github = axios.create({
+  baseURL: GITHUB_URL,
+});
 export const GithubProvider = ({ children }) => {
   // context
   // const [users, setUsers] = useState([]);
@@ -15,9 +19,9 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
-    repos:[],
-    user_followers:[],
-    user_followings:[],
+    repos: [],
+    user_followers: [],
+    user_followings: [],
     loading: false,
   };
   const [state, dispatch] = useReducer(githubReducer, initialState);
@@ -53,23 +57,26 @@ export const GithubProvider = ({ children }) => {
       q: text,
     });
 
-    const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
-      // headers:{
-      //     Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
-      // },
-      // for increasing rate limit
-    });
+    // const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
+    //   // headers:{
+    //   //     Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
+    //   // },
+    //   // for increasing rate limit
+    // });
 
-    const { items } = await response.json();
+    // const { items } = await response.json();
 
-    console.log(items);
+    const response = await github.get(`/search/users?${params}`);
+
+    console.log(response.data.items);
+    // const { items } = await response.json();
 
     // setUsers(data);
     // setLoading(false);
 
     dispatch({
       type: "GET_USERS",
-      payload: items,
+      payload: response.data.items,
     });
   };
 
@@ -77,26 +84,16 @@ export const GithubProvider = ({ children }) => {
   const getUser = async (login) => {
     setLoading();
 
-    const response = await fetch(`${GITHUB_URL}/users/${login}`);
+    const response = await github.get(`/users/${login}`);
 
-
-    if(response.status===404) {
-      window.location='/notfound'
+    if (response.status === 404) {
+      window.location = "/notfound";
     } else {
-
-      const data = await response.json();
-
-   
-console.log(data)
-  
-
-    dispatch({
-      type: "GET_USER",
-      payload: data,
-    });
+      dispatch({
+        type: "GET_USER",
+        payload: response.data,
+      });
     }
-    
-    
   };
 
   // get users repos
@@ -104,20 +101,14 @@ console.log(data)
     setLoading();
 
     const params = new URLSearchParams({
-     sort:'created',
-     per_page:10,
+      sort: "created",
+      per_page: 10,
     });
-    const response = await fetch(`${GITHUB_URL}/users/${login}/repos?${params}`, {
-    
-    });
-
-    const data = await response.json();
-
-  console.log(data)
+    const response = await github.get(`/users/${login}/repos?${params}`, {});
 
     dispatch({
       type: "GET_REPOS",
-      payload: data,
+      payload: response.data,
     });
   };
 
@@ -125,37 +116,30 @@ console.log(data)
   const getUsersFollowers = async (login) => {
     setLoading();
 
+    const response = await github.get(`/users/${login}/followers`, {});
+
+  
+
    
-    const response = await fetch(`${GITHUB_URL}/users/${login}/followers`, {
-    
-    });
-
-    const data = await response.json();
-
-  console.log(data)
 
     dispatch({
       type: "GET_FOLLOWERS",
-      payload: data,
+      payload: response.data,
     });
   };
 
-   // get user followings
-   const getUsersFollowings = async (login) => {
+  // get user followings
+  const getUsersFollowings = async (login) => {
     setLoading();
 
+    const response = await github.get(`/users/${login}/following`, {});
+
+
    
-    const response = await fetch(`${GITHUB_URL}/users/${login}/following`, {
-    
-    });
-
-    const data = await response.json();
-
-  console.log(data)
 
     dispatch({
       type: "GET_FOLLOWINGS",
-      payload: data,
+      payload: response.data,
     });
   };
 
@@ -171,18 +155,19 @@ console.log(data)
       type: "SET_LOADING",
     });
 
-
-
-
   return (
     <GithubContext.Provider
       value={{
-        users: state.users,
-        user: state.user,
-        repos:state.repos,
-        loading: state.loading,
-        user_followers:state.user_followers,
-        user_followings:state.user_followings,
+        // users: state.users,
+        // user: state.user,
+        // repos:state.repos,
+        // loading: state.loading,
+        // user_followers:state.user_followers,
+        // user_followings:state.user_followings,
+
+        // instead of this we can directly use spead operator
+        ...state,
+
         // fetchUsers,
         searchUsers,
         clearSearch,
@@ -190,7 +175,6 @@ console.log(data)
         getUsersRepos,
         getUsersFollowers,
         getUsersFollowings,
-
       }}
     >
       {children}

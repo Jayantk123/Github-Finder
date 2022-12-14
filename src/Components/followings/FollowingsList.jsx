@@ -26,5 +26,5 @@ export default function FollowingsList({followingsdata}) {
       </>
       )}
       FollowingsList.propTypes = {
-          FollowingsList: PropTypes.array.isRequired,
+        followingsdata: PropTypes.array.isRequired,
         };
